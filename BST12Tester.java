@@ -17,8 +17,8 @@ import static org.junit.Assert.*;
  */
 public class BST12Tester extends junit.framework.TestCase{
     //By default it is BST12 tree
-	private BinSearchTree12<Integer> tree = new BST12RB<Integer>();
-	private BinSearchTree12<String> stringTree = new BST12RB<String>();
+	private BinSearchTree12<Integer> tree = new BST12<Integer>();
+	private BinSearchTree12<String> stringTree = new BST12<String>();
     
     @Before
 	public void setUp() throws Exception {

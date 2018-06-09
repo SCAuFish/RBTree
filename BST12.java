@@ -6,13 +6,13 @@
 
 import java.util.NoSuchElementException;
 import java.util.Iterator;
+import java.util.Collection;
 
 /**
  * This class defines a binary search tree that implements from
  * BinSearchTree12 and adapts BST12RB as its inner structure
  */
-public class BST12<E extends Comparable<? super E>> extends BST12RB
-	implements BinSearchTree12<E>{
+public class BST12<E extends Comparable<? super E>> extends BST12RB<E>{
 		/**
 		 * No-arg constructor
 		 */
