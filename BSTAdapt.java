@@ -121,7 +121,7 @@ public class BSTAdapt<E extends Comparable<? super E>>
      * @return an Iterator over the tree
      */
     public Iterator<E> iterator(){
-        return this.tree.iterator();
+        return new adaptIterator();
     }
 
     /**
@@ -190,5 +190,41 @@ public class BSTAdapt<E extends Comparable<? super E>>
      */
     public String toString(){
         return this.tree.toString();
+    }
+
+    /**
+     * This constructor defines the iterator class for the adapt tree
+     * It does not define the removing method
+     */
+    private class adaptIterator implements Iterator{
+        Iterator<E> treeIterator;
+        
+        /**
+         * No-arg constructor
+         */
+        public adaptIterator(){
+            this.treeIterator = tree.iterator();
+        }
+
+        /**
+         * has next method
+         * @return true if there's still element
+         */
+        @Override
+        public boolean hasNext(){
+            return this.treeIterator.hasNext();
+        }
+
+        /**
+         * @return the next element
+         */
+        @Override
+        public E next() throws NoSuchElementException{
+            try{
+                return this.treeIterator.next();
+            }catch(NoSuchElementException ex){
+                throw ex;
+            }
+        }
     }
 }

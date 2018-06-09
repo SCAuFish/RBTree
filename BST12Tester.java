@@ -17,11 +17,12 @@ import static org.junit.Assert.*;
  */
 public class BST12Tester extends junit.framework.TestCase{
     //By default it is BST12 tree
-	private BinSearchTree12<Integer> tree = new BSTAdapt<Integer>();
-	private BinSearchTree12<String> stringTree = new BSTAdapt<String>();
+	private BinSearchTree12<Integer> tree = new BST12RB<Integer>();
+	private BinSearchTree12<String> stringTree = new BST12RB<String>();
     
     @Before
 	public void setUp() throws Exception {
+        //System.out.println("setting up ");
 		tree.add(5);
 		tree.add(4);
 		tree.add(2);
@@ -32,6 +33,7 @@ public class BST12Tester extends junit.framework.TestCase{
 	
     @Test
 	public void testEmptyTree() {
+        System.out.println(1);
 		tree.clear();
 		assertEquals(0, tree.size());
 		assertEquals(0, tree.height());
@@ -40,6 +42,7 @@ public class BST12Tester extends junit.framework.TestCase{
 
 	@Test
 	public void testAddUnique() {
+        System.out.println(2);
 		for (int n = 1; n <= 6; n++) {
 			assertTrue(tree.contains(n));
 		}
@@ -47,27 +50,32 @@ public class BST12Tester extends junit.framework.TestCase{
 
 	@Test
 	public void testSize() {
+        System.out.println(3);
 		assertEquals(6, tree.size());
 	}
 
 	@Test
 	public void testDepth() {
-		assertEquals(4, tree.height());
+        System.out.println(4);
+		assertEquals(3, tree.height());
 	}
 
 	@Test
 	public void testToString() {
+        System.out.println(5);
 		assertEquals("[1, 2, 3, 4, 5, 6]", tree.toString());
 	}
 
 	@Test
 	public void testAddDuplicates() {
+        System.out.println(6);
 		for (int n = 1; n <= 6; n += 2)
 			assertFalse(tree.add(n));
 	}
 
 	@Test
 	public void testRemoveExistingLeaf() {
+        System.out.println(7);
 		assertTrue(tree.remove(1));
 		assertEquals(5, tree.size());
 		assertEquals("[2, 3, 4, 5, 6]", tree.toString());
@@ -75,6 +83,7 @@ public class BST12Tester extends junit.framework.TestCase{
 
 	@Test
 	public void testRemoveExistingMiddleItemWithEmptyRightChild() {
+        System.out.println(8);
 		assertTrue(tree.remove(4));
 		assertEquals(5, tree.size());
 		assertEquals("[1, 2, 3, 5, 6]", tree.toString());
@@ -82,6 +91,7 @@ public class BST12Tester extends junit.framework.TestCase{
 
 	@Test
 	public void testRemoveExistingMiddleItemWithEmptyLeftChild() {
+        System.out.println(9);
 		tree.add(7);
 		assertTrue(tree.remove(6));
 		assertEquals(6, tree.size());
@@ -90,6 +100,7 @@ public class BST12Tester extends junit.framework.TestCase{
 
 	@Test
 	public void testRemoveExistingMiddleItemWithTwoChildren() {
+        System.out.println(10);
 		assertTrue(tree.remove(2));
 		assertEquals(5, tree.size());
 		assertEquals("[1, 3, 4, 5, 6]", tree.toString());
@@ -97,11 +108,13 @@ public class BST12Tester extends junit.framework.TestCase{
 
 	@Test
 	public void testRemoveRoot() {
+        System.out.println(11);
 		assertTrue(tree.remove(5));
 		assertEquals(5, tree.size());
 		assertEquals("[1, 2, 3, 4, 6]", tree.toString());
 	}
 
+    
 	@Test
 	public void testRandomAddAndRemove() {
 		Random rnd = new Random();
@@ -122,9 +135,11 @@ public class BST12Tester extends junit.framework.TestCase{
 			assertEquals(oracle.toString(), tree.toString());
 		}
 	}
+    
 
 	@Test
 	public void testOtherType(){
+        System.out.println(12);
 		stringTree.add("D");
 		stringTree.add("A");
 		stringTree.add("C");
