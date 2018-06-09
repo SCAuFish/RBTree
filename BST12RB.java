@@ -360,7 +360,6 @@ public class BST12RB<E extends Comparable<? super E>>
         if(toRemove == null){
             throw new NullPointerException();
         }
-        System.out.println("removing "+toRemove.element);
 
 
         //Start the long process
@@ -1160,7 +1159,6 @@ public class BST12RB<E extends Comparable<? super E>>
             assertTrue(tree.isEmpty());
             Random generator = new Random();
             for(int i = 0; i < 1000; i++){
-                System.out.println("test"+i);
                 tree.clear();
                 int size = generator.nextInt(100);
                 int removeNum = generator.nextInt(size+1);
@@ -1185,7 +1183,6 @@ public class BST12RB<E extends Comparable<? super E>>
                 for(int j = 0; j < removeNum; j++){
                     tree.printFamily(tree.root);
                     int toRemove = generator.nextInt(allEle.length);
-                    System.out.println("toRemove "+allEle[toRemove]);
                     tree.remove((Integer)allEle[toRemove]);
                     assertTrue(tree.toString(),!tree.hasTwoRed(tree.root));
                     try{
