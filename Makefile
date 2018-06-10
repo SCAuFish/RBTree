@@ -1,4 +1,4 @@
-TestAdapt: BSTAdapt.class BST12Tester.class
+TestAdapt: BST12Adapt.class BST12Tester.class
 	java -cp '.:/Users/shencheng/java/junit.jar'\
 		org.junit.runner.JUnitCore BST12Tester
 

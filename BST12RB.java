@@ -39,10 +39,14 @@ public class BST12RB<E extends Comparable<? super E>>
      * Constructor that copies a whole collection
      * @param c the collection with elements to be copied
      */
-    public BST12RB(Collection<? extends E> c){
-        this.root = null;
-        this.size = 0;
-        this.addAll(c);
+    public BST12RB(Collection<? extends E> c) 
+            throws NullPointerException, ClassCastException{
+            if(c == null){
+                throw new NullPointerException();
+            }
+            this.root = null;
+            this.size = 0;
+            this.addAll(c);
     }
 
     /*--------------------------Overriding methods--------------------------*/
@@ -244,29 +248,18 @@ public class BST12RB<E extends Comparable<? super E>>
      */
     public int numChildren(E e) 
             throws IllegalArgumentException, NoSuchElementException{
-            Node parent;
+            Node storeE;
             try{
-                parent = searchParent(e);
+                storeE = search(e);
             }catch(Exception ex){
-                throw new IllegalArgumentException();
+                throw new IllegalStateException();
             }
 
-            Node toCheck;
-            if(e.compareTo(parent.element) < 0){
-                if(parent.left == null){
-                    throw new NoSuchElementException();
-                }else{
-                    toCheck = parent.left;
-                }
-            }else{
-                if(parent.right == null){
-                    throw new NoSuchElementException();
-                }else{
-                    toCheck = parent.right;
-                }
+            if(storeE == null){
+                throw new NoSuchElementException();
             }
 
-            return numChildren(toCheck);
+            return numChildren(storeE);
     }
 
     /**
@@ -284,70 +277,6 @@ public class BST12RB<E extends Comparable<? super E>>
         }
         result += "]";
         return result;
-    }
-
-    /**
-     * Temporary main method for testing
-     */
-    public static void main(String[] args){
-        BST12RB<Integer> tree = new BST12RB<Integer>();
-        tree.add(5);
-        tree.add(4);
-        tree.add(2);
-        tree.add(3);
-        tree.add(6);
-        tree.add(1);
-        Random rnd = new Random();
-        TreeSet<Integer> oracle = new TreeSet<Integer>();
-        for (int n = 1; n <= 6; n++)
-            oracle.add(n);
-
-        for (int n = 0; n < 1000; n++) {
-            System.out.print("tree: ");
-            tree.printFamily(tree.root);
-            int toAdd = rnd.nextInt(10);
-            oracle.add(toAdd);
-            tree.add(toAdd);
-            System.out.print("add: "+toAdd);
-
-            int toRemove = rnd.nextInt(10);
-            oracle.remove(toRemove);
-            tree.remove(toRemove);
-            System.out.println("; remove: "+toRemove);
-
-            if(!oracle.toString().equals(tree.toString())){
-                System.out.println("set: "+oracle.toString());
-                System.out.println("treeString: "+tree.toString());
-                System.out.print("tree: ");
-                tree.printFamily(tree.root);
-                break;
-            }
-        }
-        /*
-        tree.root =  tree.new Node(4);
-        tree.root.color = true;
-        tree.root.left = tree.new Node(1);
-        tree.root.left.color = true;
-        tree.root.right = tree.new Node(8);
-        tree.root.right.color = true;
-        BST12RB.Node oneLeft = tree.root.left; 
-        BST12RB.Node oneRight = tree.root.right;
-        oneLeft.parent = tree.root;
-        oneRight.parent = tree.root;
-        oneLeft.left = tree.new Node(0);
-        oneLeft.left.parent = oneLeft;
-        oneLeft.right = tree.new Node(2);
-        oneLeft.right.parent = oneRight;
-        oneRight.left = tree.new Node(6);
-        oneRight.left.parent = oneRight;
-
-        System.out.println("After constructing");
-        tree.printFamily(tree.root);
-        tree.add(7);
-        tree.printFamily(tree.root);
-        tree.remove(7);
-        tree.printFamily(tree.root);
-        */
     }
 
     /*--------------------------Helper methods--------------------------*/
@@ -497,7 +426,7 @@ public class BST12RB<E extends Comparable<? super E>>
                         return true;
                     }
                     //When the sibling is red, it's quite easy and doesn't
-                    //matter if the parent is root
+                    //matter if the parent his root
                     if(sibling.color == false){
                         if(toRemove == curParent.right){
                             //Stop parentship
@@ -596,7 +525,7 @@ public class BST12RB<E extends Comparable<? super E>>
                             hasLessBlack(curParent);
                             return true;
                         }
-                        
+
                     }
                 }
             }else{
@@ -618,105 +547,95 @@ public class BST12RB<E extends Comparable<? super E>>
      * @param defect the Node with 1 black Node less
      */
     private void hasLessBlack(Node defect) 
-        throws NullPointerException, IllegalStateException{
-        //System.out.println("Entering hasLessBlack");
-        if(defect == null){
-            throw new NullPointerException();
-        }
-        if(defect.color == false){
-            throw new IllegalStateException();
-        }
-
-        //Base case
-        if(defect == root){
-            return;
-        }
-        Node curParent = defect.parent;
-        Node sibling = defect==curParent.left?curParent.right:curParent.left;
-        //Also a base case(curParent is red)
-        if(!curParent.color){
-            //Remember the nephew that will be taken by CurParent
-            Node stepSibling;
-            if(curParent.left == sibling){
-                stepSibling = sibling.right;
-                rotateClockWise(curParent);
-            }else{
-                stepSibling = sibling.left;
-                rotateCClockWise(curParent);
+            throws NullPointerException, IllegalStateException{
+            //System.out.println("Entering hasLessBlack");
+            if(defect == null){
+                throw new NullPointerException();
             }
-            balanceRB(stepSibling);
-            return;
-        }
-        //Another base case that repels the previous one
-        //(sibling is red)
-        if(sibling.color == false){
+            if(defect.color == false){
+                //throw new IllegalStateException();
+                defect.color = true;
+                return;
+            }
+
+            //Base case
+            if(defect == root){
+                return;
+            }
+            Node curParent = defect.parent;
+            Node sibling = defect==curParent.left?curParent.right:curParent.left;
+            //Also a base case(curParent is red)
+            if(!curParent.color){
+                //Remember the nephew that will be taken by CurParent
+                Node stepSibling;
+                if(curParent.left == sibling){
+                    stepSibling = sibling.right;
+                    rotateClockWise(curParent);
+                }else{
+                    stepSibling = sibling.left;
+                    rotateCClockWise(curParent);
+                }
+                balanceRB(stepSibling);
+                return;
+            }
+            //Another base case that repels the previous one
+            //(sibling is red)
+            if(sibling.color == false){
+                if(sibling == curParent.left){
+                    rotateClockWise(curParent);
+                    sibling.color = true;
+                    curParent.color = false;
+                    hasLessBlack(defect);
+                    return;
+                }else{
+                    rotateCClockWise(curParent);
+                    sibling.color = true;
+                    curParent.color = false;
+                    hasLessBlack(defect);
+                    return;
+                }
+            }
+            //Or if the sibling is not black but both its children are red
+            if(sibling.left!=null&&sibling.left.color==false
+                    &&sibling.right!=null&&sibling.right.color==false){
+                sibling.color = false;
+                sibling.left.color = true;
+                sibling.right.color = true;
+                //Now fits in the previous situation
+                hasLessBlack(defect);
+                return;
+                    }
+            //Surprisingly, if one of its child is red, it's still base case(almost)
+            if(sibling == curParent.right){
+                if(sibling.left!=null && sibling.left.color == false){
+                    sibling.left.color = true;
+                    rotateClockWise(sibling);
+                    rotateCClockWise(curParent);
+                    return;
+                }
+                if(sibling.right!=null && sibling.right.color == false){
+                    sibling.right.color = true;
+                    rotateCClockWise(curParent);
+                    return;
+                }
+            }
             if(sibling == curParent.left){
-                rotateClockWise(curParent);
-                sibling.color = true;
-                curParent.color = false;
-                hasLessBlack(defect);
-                return;
-            }else{
-                rotateCClockWise(curParent);
-                sibling.color = true;
-                curParent.color = false;
-                hasLessBlack(defect);
-                return;
+                if(sibling.left!=null && sibling.left.color == false){
+                    sibling.left.color = true;
+                    rotateClockWise(curParent);
+                    return;
+                }
+                if(sibling.right!=null && sibling.right.color == false){
+                    sibling.right.color = true;
+                    rotateCClockWise(sibling);
+                    rotateClockWise(curParent);
+                    return;
+                }
             }
-        }
-        //Or if the sibling is not black but both its children are red
-        if(sibling.left!=null&&sibling.left.color==false
-            &&sibling.right!=null&&sibling.right.color==false){
-            sibling.color = false;
-            sibling.left.color = true;
-            sibling.right.color = true;
-            //Now fits in the previous situation
-            hasLessBlack(defect);
-            return;
-        }
-        //Surprisingly, if one of its child is red, it's still base case(almost)
-        /*if(sibling.left!=null&&sibling.left.color==false){
-            if(sibling==curParent.left){
-                rotateClockWise(sibling);
-                hasLessBlack(defect);
-                return;
-            }else{
-                //Now aligned
-                rotateClockWise(sibling);
-                sibling.color = false;
-                sibling.parent.color = true;
-                hasLessBlack(defect);
-                return;
-            }
-        }else if(sibling.right!=null && sibling.right.color==false){
-            if(sibling==curParent.right){
-                rotateCClockWise(sibling);
-                hasLessBlack(defect);
-                return;
-            }else{
-                //Now align
-                rotateCClockWise(sibling);
-                sibling.color = false;
-                sibling.parent.color = true;
-                hasLessBlack(defect);
-                return;
-            }
-        }*/
 
-        //When the parent,sibling and uncle are black
-        sibling.color = false;
-        if(curParent == root){
-            if(sibling.left != null) balanceRB(sibling.left);
-            if(sibling.right != null) balanceRB(sibling.right);
-            hasLessBlack(root);
-        }else{
-            Node grandParent = curParent.parent;
-            boolean parentOnLeft = grandParent.left==curParent?true:false;
-            if(sibling.left != null) balanceRB(sibling.left);
-            if(sibling.right != null) balanceRB(sibling.right);
-            if(parentOnLeft) hasLessBlack(grandParent.left);
-            else hasLessBlack(grandParent.right);
-        }
+            //When the parent,sibling, nephews are all black
+            sibling.color = false;
+            hasLessBlack(curParent);
     }
 
     /**
@@ -856,26 +775,31 @@ public class BST12RB<E extends Comparable<? super E>>
 
         //If the uncle is black or null
         if(curParent.color == false && (uncle == null || uncle.color == true)){
-            grandParent.color = false;
-            curParent.color = true;
+            //grandParent.color = false;
+            //curParent.color = true;
+            newNode.color = true;
+            Node recursiveBalance = curParent;
             //Rotate, make parent become the new root of this partial tree
             if(grandParent.left == curParent){
                 //To make sure 2-red defects do not appear after rotating, make
                 //new red node, parent red node and grandparent on one line
                 if(curParent.right == newNode){
                     rotateCClockWise(curParent);
-                    curParent.color = false;
-                    newNode.color = true;
+                    curParent.color = true;
+                    newNode.color = false;
+                    recursiveBalance = newNode;
                 }
                 rotateClockWise(grandParent);
             }else{
                 if(curParent.left == newNode){
                     rotateClockWise(curParent);
-                    curParent.color = false;
-                    newNode.color = true;
+                    curParent.color = true;
+                    newNode.color = false;
+                    recursiveBalance = newNode;
                 }
                 rotateCClockWise(grandParent);
             }
+            balanceRB(recursiveBalance);
             return;
         }
 
@@ -1029,7 +953,7 @@ public class BST12RB<E extends Comparable<? super E>>
         if(n.left == null && n.right == null) return false;
         if(n.left != null && (!n.left.color && !n.color)) return true;
         if(n.right != null && (!n.right.color && !n.color)) return true;
-        
+
         //recurse
         return hasTwoRed(n.left) || hasTwoRed(n.right);   
     }
@@ -1053,7 +977,7 @@ public class BST12RB<E extends Comparable<? super E>>
             else return 1+leftBlack;
         }
     }
-    
+
     /**
      * This class defines the elements that constitute of a BST12RBTree
      */
@@ -1141,11 +1065,20 @@ public class BST12RB<E extends Comparable<? super E>>
             cursor = getNext(cursor);
             return toReturn;
         }
+
+        /**
+         * remove method that will be disabled
+         * @return true if successfully removed(never)
+         */
+        public void remove() throws UnsupportedOperationException{
+            throw new UnsupportedOperationException();
+        }
     }
 
     /**
      * This class is used for BST12RB's specific tests
      */
+    
     public static class RBTester extends junit.framework.TestCase{
         BST12RB tree = new BST12RB<Integer>(); 
         @Before
@@ -1158,12 +1091,19 @@ public class BST12RB<E extends Comparable<? super E>>
         public void testRBProperty(){
             assertTrue(tree.isEmpty());
             Random generator = new Random();
+            //In-order insertion
+            tree.clear();
             for(int i = 0; i < 1000; i++){
+                tree.add(i);
+            }
+            System.out.printf("In-order: size(%d), height(%d)\n", 
+                    tree.size(), tree.height());
+            for(int i = 0; i < 50; i++){
                 tree.clear();
-                int size = generator.nextInt(100);
+                int size = generator.nextInt(1000);
                 int removeNum = generator.nextInt(size+1);
                 HashSet<Integer> toAdd = new HashSet<Integer>();
-            
+
                 while(toAdd.size() < size){
                     toAdd.add(generator.nextInt(10*size));
                 }
@@ -1179,9 +1119,9 @@ public class BST12RB<E extends Comparable<? super E>>
                     }
                 }
 
+                System.out.printf("Test %d: size(%d) height(%d)\n",i,tree.size(), tree.height());
                 Object[] allEle = toAdd.toArray();
                 for(int j = 0; j < removeNum; j++){
-                    tree.printFamily(tree.root);
                     int toRemove = generator.nextInt(allEle.length);
                     tree.remove((Integer)allEle[toRemove]);
                     assertTrue(tree.toString(),!tree.hasTwoRed(tree.root));
